@@ -22,7 +22,7 @@ public class Penguin extends Car {
 		Car closest = null;
 		double distance = Double.MAX_VALUE;
 		for (Car c: Screen.cars) {
-			if (c.team != team && MathUtils.distanceTo(rect, c.rect) < distance) {
+			if (!(c instanceof Ammo) && c.team != team && MathUtils.distanceTo(rect, c.rect) < distance) {
 				closest = c;
 			}
 		}

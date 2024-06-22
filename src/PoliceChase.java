@@ -88,9 +88,10 @@ public class PoliceChase {
         Thief = new Thief(1344, 805, 0, Missile.class);
         Screen.carsToAdd.add(Thief);
         frame.addKeyListener((KeyListener) Thief);
-        Police1 = new Police01(100, 595, 0, Missile.class);
+        Police1 = new Police1(336, 630, 0, Bomb.class);
         Screen.carsToAdd.add(Police1);
-        Police2 = new Penguin(100, 100, 0, Missile.class);
+        frame.addKeyListener((KeyListener) Police1);
+        Police2 = new Penguin(112, 105, 0, Minigun.class);
         Screen.carsToAdd.add(Police2);
         //main game loop
         while (true) { 

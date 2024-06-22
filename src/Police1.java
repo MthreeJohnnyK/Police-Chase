@@ -7,9 +7,9 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-public class Police01 extends Car implements KeyListener{
+public class Police1 extends Car implements KeyListener{
 	private boolean up, left, down, right;
-	public Police01(int x, int y, double theta, Class ammo) {
+	public Police1(int x, int y, double theta, Class ammo) {
 		super(x, y, theta, 0.5, 10, Assets.newImage("Blue.png"), ammo, true);
 		// TODO Auto-generated constructor stub
 	}

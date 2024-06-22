@@ -37,7 +37,7 @@ public class Missile extends Ammo{
 		Car closest = null;
 		double distance = Double.MAX_VALUE;
 		for (Car c: Screen.cars) {
-			if (c.team != team && MathUtils.distanceTo(rect, c.rect) < distance) {
+			if (!(c instanceof Ammo) && c.team != team && MathUtils.distanceTo(rect, c.rect) < distance) {
 				double angle = MathUtils.getAngle(rect, c.rect.getCenterX(),  c.rect.getCenterY());
 				if (MathUtils.rayCast(rect, angle, c, null)) {
 					closest = c;
