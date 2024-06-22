@@ -39,4 +39,20 @@ public class MathUtils {
 		dist = Math.abs(dist > Math.PI ? 2 * Math.PI - dist : dist);
 		return dist > Math.PI ? 2 * Math.PI - dist : dist;
 	}
+	public static boolean rayCast(Rect rect, double theta, Car target){
+		Rect r = new Rect(rect.x, rect.y, 1, 1);
+		while(true) {
+			r.x += Math.cos(theta);
+			r.y -= Math.sin(theta);
+			if (Car.touchingWall(Car.getGridLocation(r.x, r.y))) {
+				return false;
+			}
+			if (r.intersects(target.rect)) {
+				return true;
+			}
+		}
+	}
+	public static double distanceTo(Rect rect, Rect other){
+		return Math.sqrt(Math.pow(rect.x - other.x, 2) + Math.pow(rect.y - other.y, 2));
+	}
 }

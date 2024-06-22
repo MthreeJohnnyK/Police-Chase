@@ -35,9 +35,6 @@ public class Assets {
 	}
 	public static BufferedImage newImage(String name) {
 		try {
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {}
 			URL url = PoliceChase.class.getResource("images/" + name);
 			BufferedImage img = ImageIO.read(url);
 			System.out.println(url + " successfully loaded.");

@@ -9,15 +9,17 @@ public class Car {
 	public int Hp; 
 	private int mHp;
 	private double theta;
+	protected double speed;
 	public Rect rect;
 	private BufferedImage img;
 	private Class ammo;
 	private long lastMove = System.nanoTime();
 	private long lastTurn = System.nanoTime();
-	public Car(int x, int y, double theta, int Hp, BufferedImage img, Class ammo) {
+	public Car(int x, int y, double theta, double speed, int Hp, BufferedImage img, Class ammo) {
 		this.Hp = Hp;
 		this.mHp = Hp;
 		this.theta = theta;
+		this.speed = speed;
 		this.rect = new Rect(x, y, 20, 20);
 		this.img = img;
 		this.ammo = ammo;
@@ -101,5 +103,11 @@ public class Car {
 		} catch (Exception e) {
 			return false;
 		}
+	}
+	public static Point getGridLocation(double x, double y) {
+		return new Point((int) (x/28), (int) (y/35));
+	}
+	public static boolean touchingWall(Point p) {
+		return PoliceChase.grid[p.y][p.x]; 
 	}
 }

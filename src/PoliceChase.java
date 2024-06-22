@@ -2,6 +2,7 @@
 
 import java.awt.Dimension; 
 import java.awt.Toolkit;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
@@ -14,6 +15,8 @@ public class PoliceChase {
     static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     static double width = screenSize.getWidth();
     static double height = screenSize.getHeight();
+    static Car Police1;
+    static Car Thief;
     static String gridString = "##################################################"
     		+ "#                                                #"
     		+ "#         #                      #    #    #     #"
@@ -80,8 +83,11 @@ public class PoliceChase {
         		grid[y][x] = gridString.charAt(y * 50 + x) == '#';
         	}
         }
-        Car car = new Penguin(100, 100, 0, null);
-        Screen.carsToAdd.add(car);
+        Thief = new Thief(1344, 805, 0, null);
+        Screen.carsToAdd.add(Thief);
+        frame.addKeyListener((KeyListener) Thief);
+        Police1 = new Penguin(100, 100, 0, null);
+        Screen.carsToAdd.add(Police1);
         //main game loop
         while (true) { 
         	//width = frame.getWidth();

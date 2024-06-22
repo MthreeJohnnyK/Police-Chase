@@ -6,19 +6,20 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class Penguin extends Car {
-	private Point target = getRandomLocation();
+	private Point target = PoliceChase.Thief.getGridLocation();
 	private Point curTarget = getGridLocation();
 	private int res;
-	private boolean devMode = true;
+	private boolean devMode = false;
 	int[][] grid = new int[25][50];
 	public Penguin(int x, int y, double theta, Class ammo) {
-		super(x, y, theta, 10, Assets.newImage("Blue.png"), ammo);
+		super(x, y, theta, 0.44, 10, Assets.newImage("Blue.png"), ammo);
 		// TODO Auto-generated constructor stub
 	}
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
 		g.setColor(Color.black);
+		target = PoliceChase.Thief.getGridLocation();
 		if (curTarget.equals(getGridLocation())) {
 			curTarget = getGridLocation();
 			res = pathFind(g);
@@ -54,15 +55,26 @@ public class Penguin extends Car {
 			}
 		}
 		double tarAngle = MathUtils.getAngle(rect, curTarget.x * 28 + 14, curTarget.y * 35 + 17.5);
+		double thiefAngle = MathUtils.getAngle(rect, PoliceChase.Thief.rect.getCenterX(),  PoliceChase.Thief.rect.getCenterY());
 		//System.out.println(tarAngle);
-		if (MathUtils.isAngleClose(getRadians(), tarAngle, Math.PI/18)) {
-		} else if (MathUtils.findClosestDir(getRadians(), tarAngle)){
-			turn(0.03);
+		if (!MathUtils.rayCast(rect, thiefAngle, PoliceChase.Thief)) {
+			if (MathUtils.isAngleClose(getRadians(), tarAngle, Math.PI/18)) {
+			} else if (MathUtils.findClosestDir(getRadians(), tarAngle)){
+				turn(speed * 0.6);
+			} else {
+				turn(-speed * 0.6);
+			}
+			if (MathUtils.isAngleClose(getRadians(), tarAngle, Math.PI/4)) {
+				move(speed);
+			}
 		} else {
-			turn(-0.03);
-		}
-		if (MathUtils.isAngleClose(getRadians(), tarAngle, Math.PI/4)) {
-			move(0.5);
+			if (MathUtils.isAngleClose(getRadians(), thiefAngle, Math.PI/36)) {
+				
+			} else if (MathUtils.findClosestDir(getRadians(), thiefAngle)){
+				turn(speed * 0.3);
+			} else {
+				turn(-speed * 0.3);
+			}
 		}
 		if (devMode) {
 			g.setColor(Color.red);
