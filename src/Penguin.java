@@ -12,14 +12,25 @@ public class Penguin extends Car {
 	private boolean devMode = false;
 	int[][] grid = new int[25][50];
 	public Penguin(int x, int y, double theta, Class ammo) {
-		super(x, y, theta, 0.44, 10, Assets.newImage("Blue.png"), ammo);
+		super(x, y, theta, 0.44, 10, Assets.newImage("Blue.png"), ammo, true);
 		// TODO Auto-generated constructor stub
 	}
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
 		g.setColor(Color.black);
-		target = PoliceChase.Thief.getGridLocation();
+		Car closest = null;
+		double distance = Double.MAX_VALUE;
+		for (Car c: Screen.cars) {
+			if (c.team != team && MathUtils.distanceTo(rect, c.rect) < distance) {
+				closest = c;
+			}
+		}
+		if (closest == null) {
+			System.out.println("The Police Wins!");
+			System.exit(0);
+		} 
+		target = closest.getGridLocation();
 		if (curTarget.equals(getGridLocation())) {
 			curTarget = getGridLocation();
 			res = pathFind(g);
@@ -55,9 +66,9 @@ public class Penguin extends Car {
 			}
 		}
 		double tarAngle = MathUtils.getAngle(rect, curTarget.x * 28 + 14, curTarget.y * 35 + 17.5);
-		double thiefAngle = MathUtils.getAngle(rect, PoliceChase.Thief.rect.getCenterX(),  PoliceChase.Thief.rect.getCenterY());
+		double thiefAngle = MathUtils.getAngle(rect, closest.rect.getCenterX(),  closest.rect.getCenterY());
 		//System.out.println(tarAngle);
-		if (!MathUtils.rayCast(rect, thiefAngle, PoliceChase.Thief)) {
+		if (!MathUtils.rayCast(rect, thiefAngle, closest, devMode ? g : null)) {
 			if (MathUtils.isAngleClose(getRadians(), tarAngle, Math.PI/18)) {
 			} else if (MathUtils.findClosestDir(getRadians(), tarAngle)){
 				turn(speed * 0.6);
@@ -68,12 +79,12 @@ public class Penguin extends Car {
 				move(speed);
 			}
 		} else {
-			if (MathUtils.isAngleClose(getRadians(), thiefAngle, Math.PI/36)) {
-				
+			if (MathUtils.isAngleClose(getRadians(), thiefAngle, Math.PI/180)) {
+				fire();
 			} else if (MathUtils.findClosestDir(getRadians(), thiefAngle)){
-				turn(speed * 0.3);
+				turn(Math.PI/360);
 			} else {
-				turn(-speed * 0.3);
+				turn(-Math.PI/360);
 			}
 		}
 		if (devMode) {

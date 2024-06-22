@@ -8,14 +8,16 @@ import java.awt.image.BufferedImage;
 public class Car {
 	public int Hp; 
 	private int mHp;
-	private double theta;
+	protected double theta;
 	protected double speed;
 	public Rect rect;
-	private BufferedImage img;
+	public boolean team;
+	protected BufferedImage img;
 	private Class ammo;
-	private long lastMove = System.nanoTime();
-	private long lastTurn = System.nanoTime();
-	public Car(int x, int y, double theta, double speed, int Hp, BufferedImage img, Class ammo) {
+	protected long lastMove = System.nanoTime() - 10000000;
+	protected long lastTurn = System.nanoTime() - 10000000;
+	protected long lastFire = System.nanoTime();
+	public Car(int x, int y, double theta, double speed, int Hp, BufferedImage img, Class ammo, boolean team) {
 		this.Hp = Hp;
 		this.mHp = Hp;
 		this.theta = theta;
@@ -23,6 +25,7 @@ public class Car {
 		this.rect = new Rect(x, y, 20, 20);
 		this.img = img;
 		this.ammo = ammo;
+		this.team = team;
 	}
 	public void paint(Graphics g) {
 		//g.setColor(Color.cyan);
@@ -75,10 +78,27 @@ public class Car {
 	}
 	public boolean touchingWall() {
 		Point loc = getGridLocation();
-		return PoliceChase.grid[loc.y][loc.x]; 
+		Point up = getGridLocation(rect.getCenterX(), rect.y);
+		Point left = getGridLocation(rect.x, rect.getCenterY());
+		Point down = getGridLocation(rect.getCenterX(), rect.getMaxY());
+		Point right = getGridLocation(rect.getMaxX(), rect.getCenterY());
+		return PoliceChase.grid[loc.y][loc.x] || PoliceChase.grid[up.y][up.x] || PoliceChase.grid[left.y][left.x] || PoliceChase.grid[down.y][down.x] || PoliceChase.grid[right.y][right.x]; 
 	}
 	public void fire() {
-		
+		for (Car c: Screen.cars) {
+			if (c instanceof Ammo && ((Ammo) c).from == this) {
+				c.fire();
+			}
+		}
+		try {
+			if (System.nanoTime() < lastFire + ammo.getField("fireTime").getLong(null)) {
+				return;
+			}
+			Screen.carsToAdd.add((Car) ammo.getConstructor(Car.class).newInstance(this));
+			lastFire = System.nanoTime();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	public static void drawImage(double x, double y, double width, double height, double direction, BufferedImage image, Graphics g) {
   	  AffineTransform at = new AffineTransform();
@@ -107,7 +127,12 @@ public class Car {
 	public static Point getGridLocation(double x, double y) {
 		return new Point((int) (x/28), (int) (y/35));
 	}
-	public static boolean touchingWall(Point p) {
-		return PoliceChase.grid[p.y][p.x]; 
+	public static boolean touchingWall(double x, double y, double radius) {
+		Point loc = getGridLocation(x, y);
+		Point up = getGridLocation(x, y - radius);
+		Point left = getGridLocation(x - radius, y);
+		Point down = getGridLocation(x, y + radius);
+		Point right = getGridLocation(x + radius, y);
+		return PoliceChase.grid[loc.y][loc.x] || PoliceChase.grid[up.y][up.x] || PoliceChase.grid[left.y][left.x] || PoliceChase.grid[down.y][down.x] || PoliceChase.grid[right.y][right.x]; 
 	}
 }

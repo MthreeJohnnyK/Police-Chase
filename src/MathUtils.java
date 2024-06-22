@@ -1,3 +1,5 @@
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Point;
 
 public class MathUtils {
@@ -39,16 +41,20 @@ public class MathUtils {
 		dist = Math.abs(dist > Math.PI ? 2 * Math.PI - dist : dist);
 		return dist > Math.PI ? 2 * Math.PI - dist : dist;
 	}
-	public static boolean rayCast(Rect rect, double theta, Car target){
-		Rect r = new Rect(rect.x, rect.y, 1, 1);
-		while(true) {
+	public static boolean rayCast(Rect rect, double theta, Car target, Graphics g){
+		Rect r = new Rect(rect.getCenterX(), rect.getCenterY(), 1, 1);
+		while (true) {
 			r.x += Math.cos(theta);
 			r.y -= Math.sin(theta);
-			if (Car.touchingWall(Car.getGridLocation(r.x, r.y))) {
+			if (Car.touchingWall(r.x, r.y, 11)) {
 				return false;
 			}
 			if (r.intersects(target.rect)) {
 				return true;
+			}
+			if (g != null) {
+				g.setColor(Color.black);
+				g.fillRect((int) r.x, (int) r.y, 1, 1);
 			}
 		}
 	}

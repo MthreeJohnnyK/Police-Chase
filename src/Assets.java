@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioInputStream;
@@ -30,6 +31,7 @@ public class Assets {
 	
 	private static ArrayList<Clip> soundList= new ArrayList<Clip>();
 	private static ArrayList<Integer> volumeList= new ArrayList<Integer>();
+	public static HashMap<String, BufferedImage> imgs = new HashMap<String, BufferedImage>();
 	public Assets() {
 		
 	}
@@ -45,6 +47,13 @@ public class Assets {
 			}
 			System.out.println("Cannot find " + name);
 			return newImage("MissingTexture.png");
+		}
+	}
+	public static void loadImages() {
+		Class[] refs = {Cannonball.class, Bomb.class, Shotgun.class, Minigun.class, Missile.class};
+		for (Class c: refs) {
+			imgs.put("Red" + c.getSimpleName(), Assets.newImage("Red" + c.getSimpleName() + ".png"));
+			imgs.put("Blue" + c.getSimpleName(), Assets.newImage("Blue" + c.getSimpleName() + ".png"));
 		}
 	}
 	public static Clip newSound(String name) {

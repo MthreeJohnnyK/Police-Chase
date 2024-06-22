@@ -16,6 +16,7 @@ public class PoliceChase {
     static double width = screenSize.getWidth();
     static double height = screenSize.getHeight();
     static Car Police1;
+    static Car Police2;
     static Car Thief;
     static String gridString = "##################################################"
     		+ "#                                                #"
@@ -57,6 +58,7 @@ public class PoliceChase {
     //initalizes the frame
     static JFrame frame = new JFrame();
     public static void main(String[] args) {
+    	Assets.loadImages();
     	s = new Screen();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize((int) width, (int) height);
@@ -83,11 +85,13 @@ public class PoliceChase {
         		grid[y][x] = gridString.charAt(y * 50 + x) == '#';
         	}
         }
-        Thief = new Thief(1344, 805, 0, null);
+        Thief = new Thief(1344, 805, 0, Missile.class);
         Screen.carsToAdd.add(Thief);
         frame.addKeyListener((KeyListener) Thief);
-        Police1 = new Penguin(100, 100, 0, null);
+        Police1 = new Police01(100, 595, 0, Missile.class);
         Screen.carsToAdd.add(Police1);
+        Police2 = new Penguin(100, 100, 0, Missile.class);
+        Screen.carsToAdd.add(Police2);
         //main game loop
         while (true) { 
         	//width = frame.getWidth();

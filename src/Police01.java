@@ -7,10 +7,10 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-public class Thief extends Car implements KeyListener{
+public class Police01 extends Car implements KeyListener{
 	private boolean up, left, down, right;
-	public Thief(int x, int y, double theta, Class ammo) {
-		super(x, y, theta, 0.5, 25, Assets.newImage("Red.png"), ammo, false);
+	public Police01(int x, int y, double theta, Class ammo) {
+		super(x, y, theta, 0.5, 10, Assets.newImage("Blue.png"), ammo, true);
 		// TODO Auto-generated constructor stub
 	}
 	@Override
@@ -37,16 +37,16 @@ public class Thief extends Car implements KeyListener{
 	public void keyPressed(KeyEvent e) {
 		int code = e.getKeyCode();
 		switch (code) {
-			case KeyEvent.VK_W:
+			case KeyEvent.VK_UP:
 				up = true;
 				break;
-			case KeyEvent.VK_A:
+			case KeyEvent.VK_LEFT:
 				left = true;
 				break;
-			case KeyEvent.VK_S:
+			case KeyEvent.VK_DOWN:
 				down = true;
 				break;
-			case KeyEvent.VK_D:
+			case KeyEvent.VK_RIGHT:
 				right = true;
 				break;
 		}
@@ -56,19 +56,19 @@ public class Thief extends Car implements KeyListener{
 	public void keyReleased(KeyEvent e) {
 		int code = e.getKeyCode();
 		switch (code) {
-			case KeyEvent.VK_W:
+			case KeyEvent.VK_UP:
 				up = false;
 				break;
-			case KeyEvent.VK_A:
+			case KeyEvent.VK_LEFT:
 				left = false;
 				break;
-			case KeyEvent.VK_S:
+			case KeyEvent.VK_DOWN:
 				down = false;
 				break;
-			case KeyEvent.VK_D:
+			case KeyEvent.VK_RIGHT:
 				right = false;
 				break;	
-			case KeyEvent.VK_Q:
+			case KeyEvent.VK_SPACE:
 				fire();
 				break;
 		}
