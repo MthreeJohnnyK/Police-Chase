@@ -7,13 +7,14 @@ import java.awt.image.BufferedImage;
 
 public class Car {
 	public int Hp; 
-	private int mHp;
+	protected int mHp;
+	protected int respawns = 2;
 	protected double theta;
 	protected double speed;
 	public Rect rect;
 	public boolean team;
 	protected BufferedImage img;
-	private Class ammo;
+	protected Class ammo;
 	protected long lastMove = System.nanoTime() - 10000000;
 	protected long lastTurn = System.nanoTime() - 10000000;
 	protected long lastFire = System.nanoTime();
@@ -36,7 +37,14 @@ public class Car {
 		g.setColor(Color.blue);
 		g.fillRect((int) rect.x, (int) rect.y - 3, (int) (rect.width * Hp/mHp), 3);
 		if (Hp <= 0) {
-			Screen.carsToRemove.add(this);
+			if (respawns > 0) {
+				Hp = mHp;
+				respawns --;
+				respawn();
+			} else {
+				Hp = 0;
+				Screen.carsToRemove.add(this);
+			}
 		}
 		if (System.nanoTime() > lastMove + 10000000) {
 			lastMove = System.nanoTime() - 10000000;
@@ -109,13 +117,22 @@ public class Car {
   	  Graphics2D g2d = (Graphics2D) g;
   	  g2d.drawImage(image, at, null);
 	}
-	public static Point getRandomLocation() {
+	public void respawn() {
 		Point target = new Point();
 		do {
 			target.x = (int) (Math.random() * 48) + 1; 
 			target.y = (int) (Math.random() * 23) + 1; 
+			if (MathUtils.distanceTo(new Rect(target.x * 28, target.y * 35, 1, 1), rect) < 230) {
+				continue;
+			}
+			for (Car c: Screen.cars) {
+				if (c.team != team && MathUtils.distanceTo(new Rect(target.x * 28, target.y * 35, 1, 1), c.rect) < 300) {
+					continue;
+				}
+			}
 		} while (!isAccessible(target.x, target.y));
-		return target;
+		rect.x = target.x * 28 + 5;
+		rect.y = target.y * 35 + 5;
 	}
 	public static boolean isAccessible(int x, int y) {
 		try {

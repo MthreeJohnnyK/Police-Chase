@@ -2,10 +2,12 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-public class Penguin extends Car {
+public class Penguin extends Car implements KeyListener{
 	private Point target = PoliceChase.Thief.getGridLocation();
 	private Point curTarget = getGridLocation();
 	private int res;
@@ -24,10 +26,11 @@ public class Penguin extends Car {
 		for (Car c: Screen.cars) {
 			if (!(c instanceof Ammo) && c.team != team && MathUtils.distanceTo(rect, c.rect) < distance) {
 				closest = c;
+				distance = MathUtils.distanceTo(rect, c.rect);
 			}
 		}
 		if (closest == null) {
-			System.out.println("The Police Wins!");
+			System.out.println("The Police Win!");
 			System.exit(0);
 		} 
 		target = closest.getGridLocation();
@@ -68,24 +71,24 @@ public class Penguin extends Car {
 		double tarAngle = MathUtils.getAngle(rect, curTarget.x * 28 + 14, curTarget.y * 35 + 17.5);
 		double thiefAngle = MathUtils.getAngle(rect, closest.rect.getCenterX(),  closest.rect.getCenterY());
 		//System.out.println(tarAngle);
-		if (!MathUtils.rayCast(rect, thiefAngle, closest, devMode ? g : null)) {
-			if (MathUtils.isAngleClose(getRadians(), tarAngle, Math.PI/18)) {
-			} else if (MathUtils.findClosestDir(getRadians(), tarAngle)){
-				turn(speed * 0.6);
-			} else {
-				turn(-speed * 0.6);
-			}
-			if (MathUtils.isAngleClose(getRadians(), tarAngle, Math.PI/4)) {
-				move(speed);
-			}
-		} else {
-			if (MathUtils.isAngleClose(getRadians(), thiefAngle, Math.PI/180)) {
-				fire();
-			} else if (MathUtils.findClosestDir(getRadians(), thiefAngle)){
-				turn(Math.PI/360);
-			} else {
-				turn(-Math.PI/360);
-			}
+		try {
+			boolean inRange = distance < ammo.getField("preferredRange").getInt(null);
+			boolean canFire = System.nanoTime() > lastFire + ammo.getField("fireTime").getLong(null);
+			boolean res = MathUtils.rayCast(rect, thiefAngle, closest, devMode ? g : null);
+			if (!inRange) {
+				if (res && canFire) {
+					aim(thiefAngle);
+				} else {
+					moveToTarget(tarAngle);
+				}
+			} else if (!res) {
+				moveToTarget(tarAngle);
+			} else if (canFire){
+				aim(thiefAngle);
+			} 
+		} catch(Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		if (devMode) {
 			g.setColor(Color.red);
@@ -103,10 +106,31 @@ public class Penguin extends Car {
 					}
 				}
 			}
-			if (getGridLocation().equals(target)) {
-				target = getRandomLocation();
-			}
 		}  	
+	}
+	public void moveToTarget(double tarAngle) {
+		if (MathUtils.isAngleClose(getRadians(), tarAngle, Math.PI/18)) {
+		} else if (MathUtils.findClosestDir(getRadians(), tarAngle)){
+			turn(speed * 0.6);
+		} else {
+			turn(-speed * 0.6);
+		}
+		if (MathUtils.isAngleClose(getRadians(), tarAngle, Math.PI/4)) {
+			move(speed);
+		}
+	}
+	public void aim(double thiefAngle) {
+		if (MathUtils.isAngleClose(getRadians(), thiefAngle, Math.PI/180)) {
+			fire();
+		} else if (MathUtils.findClosestDir(getRadians(), thiefAngle)){
+			turn(Math.PI/360);
+		} else {
+			turn(-Math.PI/360);
+		}
+	}
+	public void respawn() {
+		super.respawn();
+		curTarget = getGridLocation();
 	}
 	public int pathFind(Graphics g) {
 		grid = new int[25][50];
@@ -189,5 +213,20 @@ public class Penguin extends Car {
 	        }
 	    }
 	    return 0;
+	}
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -6,7 +6,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 public class Missile extends Ammo{
-	public static long fireTime = 3000000000L;
+	public static long fireTime = 3800000000L;
+	public static int preferredRange = Integer.MAX_VALUE;
 	public Missile(Car car) {
 		super(car, 0.6, 1, Assets.imgs.get(car.team ? "BlueMissile" : "RedMissile"));
 	}
@@ -44,7 +45,7 @@ public class Missile extends Ammo{
 				}
 			}
 		}
-		if (closest != null && MathUtils.angularDistance(theta, MathUtils.getAngle(rect, closest.rect.getCenterX(),  closest.rect.getCenterY())) < Math.PI/1.7) {
+		if (closest != null && MathUtils.angularDistance(theta, MathUtils.getAngle(rect, closest.rect.getCenterX(),  closest.rect.getCenterY())) < Math.PI/1.4) {
 			theta = MathUtils.getAngle(rect, closest.rect.getCenterX(),  closest.rect.getCenterY());
 			speed = 1.7;
 		}

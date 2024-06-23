@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 public class Bomb extends Ammo{
 	public static long fireTime = 3000000000L;
 	private long explosionTime = -1L;
+	public static int preferredRange = 550;
 	private boolean access = false;
 	public Bomb(Car car) {
 		super(car, 1.15, 2, Assets.imgs.get(car.team ? "BlueBomb" : "RedBomb"));

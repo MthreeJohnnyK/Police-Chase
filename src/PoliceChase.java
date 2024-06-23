@@ -85,7 +85,7 @@ public class PoliceChase {
         		grid[y][x] = gridString.charAt(y * 50 + x) == '#';
         	}
         }
-        Thief = new Thief(1344, 805, 0, Missile.class);
+        Thief = new Thief(1344, 805, 0, Bomb.class);
         Screen.carsToAdd.add(Thief);
         frame.addKeyListener((KeyListener) Thief);
         Police1 = new Police1(336, 630, 0, Bomb.class);
@@ -123,6 +123,14 @@ public class PoliceChase {
               } catch (InterruptedException e) {
                   // TODO Auto-generated catch block
               } 
+              if (Police1.Hp == 0 && Police1.respawns == 0 && Police2.Hp == 0 && Police2.respawns == 0) {
+            	  System.err.println("The Thief Wins!");
+            	  System.exit(0);
+              }
+              if (Thief.Hp == 0 && Thief.respawns == 0) {
+            	  System.out.println("The Police Win!");
+            	  System.exit(0);
+              }
               if (queue != null) {
             	  frame.getContentPane().removeAll();
             	  frame.add(queue);

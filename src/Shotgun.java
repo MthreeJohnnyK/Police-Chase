@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 
 public class Shotgun extends Ammo{
 	public static long fireTime = 2500000000L;
+	public static int preferredRange = 30;
 	public Shotgun(Car car) {
 		super(car, 1.7, 1, Assets.imgs.get(car.team ? "BlueShotgun" : "RedShotgun"));
 		rect.width = 8;
