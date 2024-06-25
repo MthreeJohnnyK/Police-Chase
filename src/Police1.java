@@ -23,7 +23,7 @@ public class Police1 extends Car implements KeyListener{
 			turn(speed * 0.05);
 		}
 		if (down) {
-			move(-speed);
+			move(-speed * 0.8);
 		}
 		if (right) {
 			turn(-speed * 0.05);

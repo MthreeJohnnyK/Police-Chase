@@ -21,7 +21,7 @@ public class Minigun extends Ammo{
 		super(car, 1.4, 2, Assets.imgs.get(car.team ? "BlueMinigun" : "RedMinigun"));
 		rect.width = 8;
 		rect.height = 8;
-		theta += (Math.random() - 0.5)/100;
+		theta += (Math.random() - 0.5)/6;
 		spawnTime = System.nanoTime() + delay;
 	}
 	@Override

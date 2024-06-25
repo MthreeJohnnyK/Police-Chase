@@ -85,14 +85,15 @@ public class PoliceChase {
         		grid[y][x] = gridString.charAt(y * 50 + x) == '#';
         	}
         }
-        Thief = new Thief(1344, 805, 0, Bomb.class);
+        Thief = new Penguin(1344, 805, 0, Shotgun.class, false);
         Screen.carsToAdd.add(Thief);
         frame.addKeyListener((KeyListener) Thief);
-        Police1 = new Police1(336, 630, 0, Bomb.class);
+        Police1 = new Penguin(336, 630, 0, Shotgun.class);
         Screen.carsToAdd.add(Police1);
         frame.addKeyListener((KeyListener) Police1);
-        Police2 = new Penguin(112, 105, 0, Minigun.class);
+        Police2 = new Penguin(112, 105, 0, Shotgun.class);
         Screen.carsToAdd.add(Police2);
+        frame.addKeyListener((KeyListener) Police2);
         //main game loop
         while (true) { 
         	//width = frame.getWidth();

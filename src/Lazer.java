@@ -5,13 +5,12 @@ import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
-public class Ammo extends Car{
-	Car from;
-	public Ammo(Car car, double speed, int dmg, BufferedImage img) {
-		super((int) (car.rect.getCenterX() - 5 + 10 * Math.cos(car.theta)), (int) (car.rect.getCenterY() - 5 - 10 * Math.sin(car.theta)), car.theta, speed, dmg, img, null, car.team);
-		rect.width = 10;
-		rect.height = 10;
-		from = car;
+public class Lazer extends Ammo{
+	public static long fireTime = 3000000000L;
+	public static int preferredRange = 680;
+	private boolean bounced = false;
+	public Lazer(Car car) {
+		super(car, 1.8, 2, Assets.imgs.get(car.team ? "BlueLazer" : "RedLazer"));
 	}
 	@Override
 	public void paint(Graphics g) {
@@ -24,7 +23,7 @@ public class Ammo extends Car{
 				break;
 			}
 		}
-		drawImage(rect.getCenterX(), rect.getCenterY(), rect.width, rect.height, theta, img, g);
+		drawImage(rect.getCenterX(), rect.getCenterY(), rect.width * 2.5, rect.height * 0.5, theta, img, g);
 		move(speed);
 		if (System.nanoTime() > lastMove + 10000000) {
 			lastMove = System.nanoTime() - 10000000;
@@ -34,10 +33,6 @@ public class Ammo extends Car{
 		}
 	}
 	@Override
-	public void fire() {
-		
-	}
-	@Override
 	public void move(double steps) {
 		if (System.nanoTime() < lastMove + 10000000) {
 			return;
@@ -45,11 +40,29 @@ public class Ammo extends Car{
 		steps *= (System.nanoTime() - lastMove)/10000000.0;
 		rect.x += steps * Math.cos(theta);
 		if (touchingWall()) {
-			Screen.carsToRemove.add(this);
+			if (!bounced) {
+				bounced = true;
+				while(touchingWall()) {
+					rect.x -=  Math.cos(theta);
+				}
+				theta = Math.PI - theta;
+				return;
+			} else {
+				Screen.carsToRemove.add(this);
+			}
 		}
 		rect.y -= steps * Math.sin(theta);
 		if (touchingWall()) {
-			Screen.carsToRemove.add(this);
+			if (!bounced) {
+				bounced = true;
+				while(touchingWall()) {
+					rect.y += Math.sin(theta);
+				}
+				theta = 2 * Math.PI - theta;
+				return;
+			} else {
+				Screen.carsToRemove.add(this);
+			}
 		}
 		lastMove = System.nanoTime();
 	}

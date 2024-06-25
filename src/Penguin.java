@@ -8,13 +8,17 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class Penguin extends Car implements KeyListener{
-	private Point target = PoliceChase.Thief.getGridLocation();
+	private Point target;
 	private Point curTarget = getGridLocation();
 	private int res;
 	private boolean devMode = false;
 	int[][] grid = new int[25][50];
 	public Penguin(int x, int y, double theta, Class ammo) {
 		super(x, y, theta, 0.44, 10, Assets.newImage("Blue.png"), ammo, true);
+		// TODO Auto-generated constructor stub
+	}
+	public Penguin(int x, int y, double theta, Class ammo, boolean team) {
+		super(x, y, theta, 0.44, team ? 10 : 25, Assets.newImage(team ? "Blue.png" : "Red.png"), ammo, team);
 		// TODO Auto-generated constructor stub
 	}
 	@Override
@@ -29,8 +33,12 @@ public class Penguin extends Car implements KeyListener{
 				distance = MathUtils.distanceTo(rect, c.rect);
 			}
 		}
-		if (closest == null) {
-			System.out.println("The Police Win!");
+		if (closest == null && Hp > 0) {
+			if (team) {
+				System.out.println("The Police Win!");
+			} else {
+				System.err.println("The Thief Wins!");
+			}
 			System.exit(0);
 		} 
 		target = closest.getGridLocation();
@@ -74,7 +82,19 @@ public class Penguin extends Car implements KeyListener{
 		try {
 			boolean inRange = distance < ammo.getField("preferredRange").getInt(null);
 			boolean canFire = System.nanoTime() > lastFire + ammo.getField("fireTime").getLong(null);
-			boolean res = MathUtils.rayCast(rect, thiefAngle, closest, devMode ? g : null);
+			boolean ignore;
+			int limit;
+			try {
+				ignore = ammo.getField("penetrable").getBoolean(null);
+			} catch (Exception e) {
+				ignore = false;
+			}
+			try {
+				limit = ammo.getField("limit").getInt(null);
+			} catch (Exception e) {
+				limit = Integer.MAX_VALUE;
+			}
+			boolean res = MathUtils.rayCast(rect, thiefAngle, closest, ignore, limit, devMode ? g : null);
 			if (!inRange) {
 				if (res && canFire) {
 					aim(thiefAngle);

@@ -50,7 +50,9 @@ public class Assets {
 		}
 	}
 	public static void loadImages() {
-		Class[] refs = {Cannonball.class, Bomb.class, Shotgun.class, Minigun.class, Missile.class};
+		Class[] refs = {Cannonball.class, Bomb.class, Shotgun.class, 
+				Minigun.class, Missile.class, Mortar.class,
+				Lazer.class};
 		for (Class c: refs) {
 			imgs.put("Red" + c.getSimpleName(), Assets.newImage("Red" + c.getSimpleName() + ".png"));
 			imgs.put("Blue" + c.getSimpleName(), Assets.newImage("Blue" + c.getSimpleName() + ".png"));

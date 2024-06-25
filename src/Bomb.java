@@ -65,11 +65,13 @@ public class Bomb extends Ammo{
 		if (touchingWall()) {
 			access = true;
 			fire();
+			return;
 		}
 		rect.y -= steps * Math.sin(theta);
 		if (touchingWall()) {
 			access = true;
 			fire();
+			return;
 		}
 		lastMove = System.nanoTime();
 	}

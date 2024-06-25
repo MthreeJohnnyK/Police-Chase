@@ -19,6 +19,7 @@ public class Missile extends Ammo{
 			if (c.team != this.team && c.rect.intersects(this.rect) && !(c instanceof Ammo)) {
 				c.Hp -= Hp;
 				Screen.carsToRemove.add(this);
+				break;
 			}
 		}
 		drawImage(rect.getCenterX(), rect.getCenterY(), rect.width * 2.5, rect.height, theta, img, g);

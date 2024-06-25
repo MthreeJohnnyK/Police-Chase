@@ -58,7 +58,27 @@ public class MathUtils {
 			}
 		}
 	}
+	public static boolean rayCast(Rect rect, double theta, Car target, boolean ignore, int limit, Graphics g){
+		Rect r = new Rect(rect.getCenterX(), rect.getCenterY(), 1, 1);
+		for (int count = 0; true; count++) {
+			r.x += Math.cos(theta);
+			r.y -= Math.sin(theta);
+			if (!ignore && Car.touchingWall(r.x, r.y, 11)) {
+				return false;
+			}
+			if (r.x < 28 || r.y < 35 || r.x > 1372 || r.y > 840 || count >= limit) {
+				return false;
+			}
+			if (r.intersects(target.rect)) {
+				return true;
+			}
+			if (g != null) {
+				g.setColor(Color.black);
+				g.fillRect((int) r.x, (int) r.y, 1, 1);
+			}
+		}
+	}
 	public static double distanceTo(Rect rect, Rect other){
-		return Math.sqrt(Math.pow(rect.x - other.x, 2) + Math.pow(rect.y - other.y, 2));
+		return Math.sqrt(Math.pow(rect.getCenterX() - other.getCenterX(), 2) + Math.pow(rect.getCenterY() - other.getCenterY(), 2));
 	}
 }
