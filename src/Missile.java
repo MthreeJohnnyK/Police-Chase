@@ -43,6 +43,7 @@ public class Missile extends Ammo{
 				double angle = MathUtils.getAngle(rect, c.rect.getCenterX(),  c.rect.getCenterY());
 				if (MathUtils.rayCast(rect, angle, c, null)) {
 					closest = c;
+					distance = MathUtils.distanceTo(rect, c.rect);
 				}
 			}
 		}

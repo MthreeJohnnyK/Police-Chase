@@ -18,7 +18,8 @@ public class Car {
 	protected long lastMove = System.nanoTime() - 10000000;
 	protected long lastTurn = System.nanoTime() - 10000000;
 	protected long lastFire = System.nanoTime();
-	public Car(int x, int y, double theta, double speed, int Hp, BufferedImage img, Class ammo, boolean team) {
+	protected Ability a;
+	public Car(int x, int y, double theta, double speed, int Hp, BufferedImage img, Class ammo, Ability a, boolean team) {
 		this.Hp = Hp;
 		this.mHp = Hp;
 		this.theta = theta;
@@ -27,11 +28,15 @@ public class Car {
 		this.img = img;
 		this.ammo = ammo;
 		this.team = team;
+		this.a = a;
 	}
 	public void paint(Graphics g) {
 		//g.setColor(Color.cyan);
 		//g.fillRect((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height);
 		drawImage(rect.getCenterX(), rect.getCenterY(), rect.width, rect.height, theta, img, g);
+		a.paint(this, g);
+		//g.setColor(Color.cyan);
+		//g.fillRect((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height);
 		g.setColor(Color.red);
 		g.fillRect((int) rect.x, (int) rect.y - 3, (int) rect.width, 3);
 		g.setColor(Color.blue);
@@ -45,6 +50,8 @@ public class Car {
 				Hp = 0;
 				Screen.carsToRemove.add(this);
 			}
+		} else if (Hp > mHp) {
+			Hp = mHp;
 		}
 		if (System.nanoTime() > lastMove + 10000000) {
 			lastMove = System.nanoTime() - 10000000;
@@ -119,18 +126,21 @@ public class Car {
 	}
 	public void respawn() {
 		Point target = new Point();
+		boolean b = true;
 		do {
+			b = true;
 			target.x = (int) (Math.random() * 48) + 1; 
-			target.y = (int) (Math.random() * 23) + 1; 
-			if (MathUtils.distanceTo(new Rect(target.x * 28, target.y * 35, 1, 1), rect) < 230) {
-				continue;
+			target.y = (int) (Math.random() * 23) + 1;
+			if (MathUtils.distanceTo(new Rect(target.x * 28 + 5, target.y * 35 + 5, 0, 0), rect) < 300) {
+				b = false;
 			}
 			for (Car c: Screen.cars) {
-				if (c.team != team && MathUtils.distanceTo(new Rect(target.x * 28, target.y * 35, 1, 1), c.rect) < 300) {
-					continue;
+				if (c.team != team && MathUtils.distanceTo(new Rect(target.x * 28 + 5, target.y * 35 + 5, 0, 0), c.rect) < 380) {
+					b = false;
+					break;
 				}
 			}
-		} while (!isAccessible(target.x, target.y));
+		} while (!isAccessible(target.x, target.y) || !b);
 		rect.x = target.x * 28 + 5;
 		rect.y = target.y * 35 + 5;
 	}
@@ -151,5 +161,8 @@ public class Car {
 		Point down = getGridLocation(x, y + radius);
 		Point right = getGridLocation(x + radius, y);
 		return PoliceChase.grid[loc.y][loc.x] || PoliceChase.grid[up.y][up.x] || PoliceChase.grid[left.y][left.x] || PoliceChase.grid[down.y][down.x] || PoliceChase.grid[right.y][right.x]; 
+	}
+	public void activate() {
+		a.activate(this);
 	}
 }

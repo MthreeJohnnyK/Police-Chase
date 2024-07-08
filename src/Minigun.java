@@ -6,7 +6,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 public class Minigun extends Ammo{
-	public static long fireTime = 2500000000L;
+	public static long fireTime = 5800000000L;
 	public static int preferredRange = 300;
 	private long spawnTime;
 	public Minigun(Car car) {
@@ -21,7 +21,7 @@ public class Minigun extends Ammo{
 		super(car, 1.4, 2, Assets.imgs.get(car.team ? "BlueMinigun" : "RedMinigun"));
 		rect.width = 8;
 		rect.height = 8;
-		theta += (Math.random() - 0.5)/6;
+		theta += (Math.random() - 0.5)/8;
 		spawnTime = System.nanoTime() + delay;
 	}
 	@Override

@@ -39,15 +39,20 @@ public class Screen extends JPanel{
 		g.setFont(new Font(Font.SANS_SERIF, Font.ROMAN_BASELINE, 26));
 		String name = car.getClass().getSimpleName() + ":";
 		int width = g.getFontMetrics().stringWidth(name);
+		long cd = car.a.cooldown;
+		long elapsed = System.nanoTime() - car.a.lastActivate;
+		elapsed = elapsed > cd ? cd : elapsed;
 		g.setColor(Color.red);
-    	g.fillRect(x + width + 10, 5, 100, 23);
+    	g.fillRect(x + width + 10, 3, 100, 29);
     	g.setColor(Color.blue);
-    	g.fillRect(x + width + 10, 5, (int) (100.0 * car.Hp/car.mHp), 23);
+    	g.fillRect(x + width + 10, 3, (int) (100.0 * car.Hp/car.mHp), 29);
     	g.setColor(Color.black);
     	g.drawString(car.getClass().getSimpleName() + ":", x, 26);
     	g.drawString(car.respawns > 0 ? "(+" + car.respawns + " Lives)" : "(Last Life)", x + width + 115, 26);
     	g.setColor(Color.white);
-    	g.drawString(car.Hp + "", x + width + 50, 26);
+    	g.drawString(car.Hp + "", x + width + 60 - g.getFontMetrics().stringWidth(car.Hp + "")/2, 23);
+    	g.setColor(Color.cyan);
+    	g.fillRect(x + width + 10, 26, (int) (100.0 * elapsed/cd), 6); 	
 	}
 	public void drawMap(Graphics g) {
 		g.setColor(Color.green);

@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 public class Ammo extends Car{
 	Car from;
 	public Ammo(Car car, double speed, int dmg, BufferedImage img) {
-		super((int) (car.rect.getCenterX() - 5 + 10 * Math.cos(car.theta)), (int) (car.rect.getCenterY() - 5 - 10 * Math.sin(car.theta)), car.theta, speed, dmg, img, null, car.team);
+		super((int) (car.rect.getCenterX() - 5 + 10 * Math.cos(car.theta)), (int) (car.rect.getCenterY() - 5 - 10 * Math.sin(car.theta)), car.theta, speed, dmg, img, null, null, car.team);
 		rect.width = 10;
 		rect.height = 10;
 		from = car;

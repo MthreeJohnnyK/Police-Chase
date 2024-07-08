@@ -8,17 +8,17 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class Penguin extends Car implements KeyListener{
-	private Point target;
+	private Point target = getGridLocation();
 	private Point curTarget = getGridLocation();
 	private int res;
 	private boolean devMode = false;
 	int[][] grid = new int[25][50];
 	public Penguin(int x, int y, double theta, Class ammo) {
-		super(x, y, theta, 0.44, 10, Assets.newImage("Blue.png"), ammo, true);
+		this(x, y, theta, ammo, true);
 		// TODO Auto-generated constructor stub
 	}
 	public Penguin(int x, int y, double theta, Class ammo, boolean team) {
-		super(x, y, theta, 0.44, team ? 10 : 25, Assets.newImage(team ? "Blue.png" : "Red.png"), ammo, team);
+		super(x, y, theta, 0.44, team ? 10 : 25, Assets.newImage(team ? "Blue.png" : "Red.png"), ammo, new Heal(), team);
 		// TODO Auto-generated constructor stub
 	}
 	@Override
@@ -28,20 +28,20 @@ public class Penguin extends Car implements KeyListener{
 		Car closest = null;
 		double distance = Double.MAX_VALUE;
 		for (Car c: Screen.cars) {
-			if (!(c instanceof Ammo) && c.team != team && MathUtils.distanceTo(rect, c.rect) < distance) {
+			if (!(c instanceof Ammo) && c.team != team && MathUtils.distanceTo(rect, c.rect) < distance && !Car.touchingWall(c.rect.getCenterX(), c.rect.getCenterY(), 0)) {
 				closest = c;
 				distance = MathUtils.distanceTo(rect, c.rect);
 			}
 		}
-		if (closest == null && Hp > 0) {
-			if (team) {
-				System.out.println("The Police Win!");
-			} else {
-				System.err.println("The Thief Wins!");
-			}
-			System.exit(0);
-		} 
-		target = closest.getGridLocation();
+		if (closest == null) {
+			target = getGridLocation();
+			closest = this;
+		} else {
+			target = closest.getGridLocation();
+		}
+		if (Hp < 8) {
+			activate();
+		}	
 		if (curTarget.equals(getGridLocation())) {
 			curTarget = getGridLocation();
 			res = pathFind(g);

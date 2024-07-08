@@ -9,8 +9,8 @@ import java.util.ArrayList;
 
 public class Police1 extends Car implements KeyListener{
 	private boolean up, left, down, right;
-	public Police1(int x, int y, double theta, Class ammo) {
-		super(x, y, theta, 0.5, 10, Assets.newImage("Blue.png"), ammo, true);
+	public Police1(int x, int y, double theta, Class ammo, Ability a) {
+		super(x, y, theta, 0.5, 10, Assets.newImage("Blue.png"), ammo, a, true);
 		// TODO Auto-generated constructor stub
 	}
 	@Override
@@ -70,6 +70,9 @@ public class Police1 extends Car implements KeyListener{
 				break;	
 			case KeyEvent.VK_SPACE:
 				fire();
+				break;
+			case KeyEvent.VK_ENTER:
+				activate();
 				break;
 		}
 		

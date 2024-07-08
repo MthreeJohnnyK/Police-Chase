@@ -11,7 +11,7 @@ public class Bomb extends Ammo{
 	public static int preferredRange = 550;
 	private boolean access = false;
 	public Bomb(Car car) {
-		super(car, 1.15, 2, Assets.imgs.get(car.team ? "BlueBomb" : "RedBomb"));
+		super(car, 2.3, 2, Assets.imgs.get(car.team ? "BlueBomb" : "RedBomb"));
 	}
 	@Override
 	public void paint(Graphics g) {
