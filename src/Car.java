@@ -34,7 +34,9 @@ public class Car {
 		//g.setColor(Color.cyan);
 		//g.fillRect((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height);
 		drawImage(rect.getCenterX(), rect.getCenterY(), rect.width, rect.height, theta, img, g);
-		a.paint(this, g);
+		if (a != null) {
+			a.paint(this, g);
+		}
 		//g.setColor(Color.cyan);
 		//g.fillRect((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height);
 		g.setColor(Color.red);
@@ -75,6 +77,17 @@ public class Car {
 		}
 		lastMove = System.nanoTime();
 	}
+	public void forceMove(double x, double y, double steps) {
+		double theta = MathUtils.getAngle(rect, x, y);
+		rect.x += steps * Math.cos(theta);
+		if (touchingWall()) {
+			rect.x -= steps * Math.cos(theta);
+		}
+		rect.y -= steps * Math.sin(theta);
+		if (touchingWall()) {
+			rect.y += steps * Math.sin(theta);
+		}
+	}
 	public void turn(double theta) {
 		if (System.nanoTime() < lastTurn + 10000000) {
 			return;
@@ -101,6 +114,11 @@ public class Car {
 	}
 	public void fire() {
 		for (Car c: Screen.cars) {
+			if (c instanceof Ammo && ((Ammo) c).from == this) {
+				c.fire();
+			}
+		}
+		for (Car c: Screen.carsToAdd) {
 			if (c instanceof Ammo && ((Ammo) c).from == this) {
 				c.fire();
 			}

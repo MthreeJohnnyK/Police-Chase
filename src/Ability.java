@@ -12,6 +12,7 @@ public class Ability {
 		this.cooldown = cooldown;
 		this.duration = duration;
 		this.img = img;
+		lastActivate -= cooldown/2;
 	}
 	public void paint(Car c, Graphics g) {
 		if (System.nanoTime() > lastActivate + duration) {

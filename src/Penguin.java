@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public class Penguin extends Car implements KeyListener{
 	private Point target = getGridLocation();
 	private Point curTarget = getGridLocation();
+	private Point last = new Point(0, 0);
 	private int res;
 	private boolean devMode = false;
 	int[][] grid = new int[25][50];
@@ -28,7 +29,7 @@ public class Penguin extends Car implements KeyListener{
 		Car closest = null;
 		double distance = Double.MAX_VALUE;
 		for (Car c: Screen.cars) {
-			if (!(c instanceof Ammo) && c.team != team && MathUtils.distanceTo(rect, c.rect) < distance && !Car.touchingWall(c.rect.getCenterX(), c.rect.getCenterY(), 0)) {
+			if (!(c instanceof Ammo) && (!(c instanceof Trap) || ((Trap) c).visibility > 0) && c.team != team && MathUtils.distanceTo(rect, c.rect) < distance && !Car.touchingWall(c.rect.getCenterX(), c.rect.getCenterY(), 0)) {
 				closest = c;
 				distance = MathUtils.distanceTo(rect, c.rect);
 			}
@@ -39,10 +40,10 @@ public class Penguin extends Car implements KeyListener{
 		} else {
 			target = closest.getGridLocation();
 		}
-		if (Hp < 8) {
+		if (Hp <= mHp - 3) {
 			activate();
 		}	
-		if (curTarget.equals(getGridLocation())) {
+		if (!getGridLocation().equals(last)) {
 			curTarget = getGridLocation();
 			res = pathFind(g);
 			switch(res) {
@@ -76,6 +77,7 @@ public class Penguin extends Car implements KeyListener{
 					break;
 			}
 		}
+		last = getGridLocation();
 		double tarAngle = MathUtils.getAngle(rect, curTarget.x * 28 + 14, curTarget.y * 35 + 17.5);
 		double thiefAngle = MathUtils.getAngle(rect, closest.rect.getCenterX(),  closest.rect.getCenterY());
 		//System.out.println(tarAngle);
@@ -142,6 +144,9 @@ public class Penguin extends Car implements KeyListener{
 	public void aim(double thiefAngle) {
 		if (MathUtils.isAngleClose(getRadians(), thiefAngle, Math.PI/180)) {
 			fire();
+			if (ammo == Missile.class) {
+				fire();
+			}
 		} else if (MathUtils.findClosestDir(getRadians(), thiefAngle)){
 			turn(Math.PI/360);
 		} else {

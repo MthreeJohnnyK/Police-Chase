@@ -2,16 +2,21 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class Sentry extends Car {
-
-	public Sentry(int x, int y, double theta, boolean team) {
-		super(x, y, theta, 0.0, 8, Assets.newImage(team ? "BlueSentry.png" : "RedSentry.png"), Cannonball.class, null, team);
-		// TODO Auto-generated constructor stub
+	private int range;
+	public Sentry(int x, int y, Class ammo, double theta, boolean team) {
+		super(x, y, theta, 0.0, 8, Assets.newImage(team ? "BlueSentry.png" : "RedSentry.png"), ammo, null, team);
+		try {
+			range = ammo.getField("preferredRange").getInt(null);
+		} catch (Exception e) {
+			e.printStackTrace();
+			range = 165;
+		}
 	}
 	@Override
 	public void paint(Graphics g) {
 		drawImage(rect.getCenterX(), rect.getCenterY(), rect.width, rect.height, theta, img, g);
 		g.setColor(Color.black);
-		g.drawOval((int) (rect.getCenterX() - 165), (int) (rect.getCenterY() - 165), 330, 330);
+		g.drawOval((int) (rect.getCenterX() - range), (int) (rect.getCenterY() - range), range * 2, range * 2);
 		g.setColor(Color.red);
 		g.fillRect((int) rect.x, (int) rect.y - 3, (int) rect.width, 3);
 		g.setColor(Color.blue);
@@ -26,17 +31,31 @@ public class Sentry extends Car {
 		double distance = Double.MAX_VALUE;
 		for (Car c: Screen.cars) {
 			double d = MathUtils.distanceTo(rect, c.rect);
-			if (!(c instanceof Ammo) && c.team != team && d < 165 && d < distance) {
+			if (!(c instanceof Ammo) && c.team != team && d < range && d < distance) {
 				double angle = MathUtils.getAngle(rect, c.rect.getCenterX(),  c.rect.getCenterY());
-				if (MathUtils.rayCast(rect, angle, c, null)) {
+				boolean ignore;
+				try {
+					ignore = ammo.getField("penetrable").getBoolean(null);
+				} catch (Exception e) {
+					ignore = false;
+				}
+				if (MathUtils.rayCast(rect, angle, c, ignore, range, null)) {
 					closest = c;
 					distance = d;
 				}
 			}
 		}
-		if (closest != null) {
-			theta = MathUtils.getAngle(rect, closest.rect.getCenterX(),  closest.rect.getCenterY());
-			fire();
+		try {
+			if (closest != null && System.nanoTime() >= lastFire + ammo.getField("fireTime").getLong(null) * 2) {
+				theta = MathUtils.getAngle(rect, closest.rect.getCenterX(),  closest.rect.getCenterY());
+				fire();
+				if (ammo == Missile.class) {
+					fire();
+				}
+			}
+		}  catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	public void fire() {
@@ -45,8 +64,13 @@ public class Sentry extends Car {
 				c.fire();
 			}
 		}
+		for (Car c: Screen.carsToAdd) {
+			if (c instanceof Ammo && ((Ammo) c).from == this) {
+				c.fire();
+			}
+		}
 		try {
-			if (System.nanoTime() < lastFire + 1000000000L) {
+			if (System.nanoTime() < lastFire + ammo.getField("fireTime").getLong(null) * 2) {
 				return;
 			}
 			Screen.carsToAdd.add((Car) ammo.getConstructor(Car.class).newInstance(this));

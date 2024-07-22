@@ -29,6 +29,7 @@ public class Bomb extends Ammo{
 		for (Car c: Screen.cars) {
 			if (c.team != this.team && c.rect.intersects(this.rect) && !(c instanceof Ammo)) {
 				access = true;
+				c.Hp --;
 				fire();
 			}
 		}
@@ -49,8 +50,10 @@ public class Bomb extends Ammo{
 			return;
 		}
 		for (Car c: Screen.cars) {
-			if (c.team != this.team && MathUtils.distanceTo(rect, c.rect) <= 50 && !(c instanceof Ammo)) {
-				c.Hp -= Hp;
+			if (c.team != this.team && !(c instanceof Ammo)) {
+				if (MathUtils.distanceTo(rect, c.rect) <= 50) {	
+					c.Hp -= Hp;
+				}
 			}
 		}
 		explosionTime = System.nanoTime();

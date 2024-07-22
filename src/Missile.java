@@ -9,7 +9,7 @@ public class Missile extends Ammo{
 	public static long fireTime = 3800000000L;
 	public static int preferredRange = Integer.MAX_VALUE;
 	public Missile(Car car) {
-		super(car, 0.6, 1, Assets.imgs.get(car.team ? "BlueMissile" : "RedMissile"));
+		super(car, 0.6, 2, Assets.imgs.get(car.team ? "BlueMissile" : "RedMissile"));
 	}
 	@Override
 	public void paint(Graphics g) {
@@ -33,7 +33,7 @@ public class Missile extends Ammo{
 	}
 	@Override
 	public void fire() {
-		if (speed >= 1.7) {
+		if (speed > 1) {
 			return;
 		}
 		Car closest = null;
@@ -49,7 +49,7 @@ public class Missile extends Ammo{
 		}
 		if (closest != null && MathUtils.angularDistance(theta, MathUtils.getAngle(rect, closest.rect.getCenterX(),  closest.rect.getCenterY())) < Math.PI/1.4) {
 			theta = MathUtils.getAngle(rect, closest.rect.getCenterX(),  closest.rect.getCenterY());
-			speed = 1.7;
+			speed = 1;
 		}
 	}
 	@Override
@@ -58,8 +58,7 @@ public class Missile extends Ammo{
 			return;
 		}
 		steps *= (System.nanoTime() - lastMove)/10000000.0;
-		speed += speed >= 1.7 ? steps/100 : 0;
-		Hp = speed > 10 ? 2 : 1;
+		speed += speed >= 1 ? steps/50 : 0;
 		rect.x += steps * Math.cos(theta);
 		if (touchingWall()) {
 			Screen.carsToRemove.add(this);

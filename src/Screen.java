@@ -19,6 +19,7 @@ public class Screen extends JPanel{
     	drawMap(g);
     	for (Car car: cars) {
     		car.paint(g);
+    		//car.forceMove(0, 0, 0.05);
     	}
     	for (Car car: carsToAdd) {
     		cars.add(car);
@@ -33,7 +34,7 @@ public class Screen extends JPanel{
     	drawStats(PoliceChase.Thief, 1000, g);
 	}
 	public void drawStats(Car car, int x, Graphics g) {
-		if (car.Hp == 0 && car.respawns == 0) {
+		if (car == null || car.Hp == 0 && car.respawns == 0) {
 			return;
 		}
 		g.setFont(new Font(Font.SANS_SERIF, Font.ROMAN_BASELINE, 26));

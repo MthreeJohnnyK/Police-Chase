@@ -17,7 +17,7 @@ public class Mortar extends Ammo{
 		Car closest = null;
 		double dist = Double.MAX_VALUE;
 		for (Car c: Screen.cars) {
-			if (c.team != team) {
+			if (!(c instanceof Ammo) && c.team != team) {
 				double d = MathUtils.angularDistance(theta, MathUtils.getAngle(rect, c.rect.getCenterX(), c.rect.getCenterY()));
 				if (d < dist) {
 					dist = d;
