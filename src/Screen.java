@@ -13,22 +13,47 @@ public class Screen extends JPanel{
 	public static ArrayList<Car> cars = new ArrayList<Car>();
 	public static ArrayList<Car> carsToAdd = new ArrayList<Car>();
 	public static ArrayList<Car> carsToRemove = new ArrayList<Car>();
+	public static ArrayList<PowerUp> powerups = new ArrayList<PowerUp>();
+	private long lastPowerUp = System.nanoTime();
 	public void paint(Graphics g) {
 		g.setColor(Color.white);
     	g.fillRect(0, 0, getWidth(), getHeight());
-    	drawMap(g);
-    	for (Car car: cars) {
-    		car.paint(g);
-    		//car.forceMove(0, 0, 0.05);
+    	if (System.nanoTime() > lastPowerUp + 25000000000L) {
+    		PowerUp.newPowerUp();
+    		lastPowerUp = System.nanoTime();
     	}
+    	drawMap(g);
     	for (Car car: carsToAdd) {
     		cars.add(car);
     	}
     	carsToAdd.clear();
     	for (Car car: carsToRemove) {
     		cars.remove(car);
+    		car.Hp = 0;
     	}
     	carsToRemove.clear();
+    	int thief = 0;
+    	int police = 0;
+    	for (Car car: cars) {
+    		car.paint(g);
+    		if (car.Hp > 0) {
+	    		if (car.team) {
+	    			police ++;
+	    		} else {
+	    			thief ++;
+	    		}
+    		}
+    	}
+    	if (thief == 0 && police == 0) {
+    		System.out.println("It's a Draw!");
+      	  	System.exit(0);
+    	} else if (thief == 0) {
+    		System.out.println("The Police Win!");
+       	  	System.exit(0);
+    	} else if (police == 0) {
+    		System.err.println("The Thief Wins!");
+      	  	System.exit(0);
+    	}
     	drawStats(PoliceChase.Police1, 15, g);
     	drawStats(PoliceChase.Police2, 500, g);
     	drawStats(PoliceChase.Thief, 1000, g);
@@ -59,69 +84,9 @@ public class Screen extends JPanel{
 		g.setColor(Color.green);
 		for (int y = 0; y < PoliceChase.grid.length; y ++) {
     		for (int x = 0; x < PoliceChase.grid[y].length; x ++) {
-    			if (PoliceChase.grid[y][x]) {
-    				g.fillRect(x * 28, y * 35, 28, 35);
-    			} else {
-    				continue;
-    			}
-    			g.setColor(Color.black);
-    			try {
-    				if (!PoliceChase.grid[y - 1][x]){
-    					g.fillRect(x * 28, y * 35, 28, 3);
-    				}
-    			} catch (Exception e) {
-    				g.fillRect(x * 28, y * 35, 28, 3);
-    			}
-    			try {
-    				if (!PoliceChase.grid[y - 1][x + 1]){
-    					g.fillRect(x * 28 + 25, y * 35, 3, 3);
-    				}
-    			} catch (Exception e) {
-    				g.fillRect(x * 28 + 25, y * 35, 3, 3);
-    			}
-    			try {
-    				if (!PoliceChase.grid[y][x - 1]){
-    					g.fillRect(x * 28, y * 35, 3, 35);
-    				}
-    			} catch (Exception e) {
-    				g.fillRect(x * 28, y * 35, 3, 35);
-    			}
-    			try {
-    				if (!PoliceChase.grid[y + 1][x + 1]){
-    					g.fillRect(x * 28 + 25, y * 35 + 32, 3, 3);
-    				}
-    			} catch (Exception e) {
-    				g.fillRect(x * 28 + 25, y * 35 + 32, 3, 3);
-    			}
-    			try {
-    				if (!PoliceChase.grid[y + 1][x]){
-    					g.fillRect(x * 28, y * 35 + 32, 28, 3);
-    				}
-    			} catch (Exception e) {
-    				g.fillRect(x * 28, y * 35 + 32, 28, 3);
-    			}
-    			try {
-    				if (!PoliceChase.grid[y + 1][x - 1]){
-    					g.fillRect(x * 28, y * 35 + 32, 3, 3);
-    				}
-    			} catch (Exception e) {
-    				g.fillRect(x * 28, y * 35 + 32, 3, 3);
-    			}
-    			try {
-    				if (!PoliceChase.grid[y][x + 1]){
-    					g.fillRect(x * 28 + 25, y * 35, 3, 35);
-    				}
-    			} catch (Exception e) {
-    				g.fillRect(x * 28 + 25, y * 35, 3, 35);
-    			}
-    			try {
-    				if (!PoliceChase.grid[y - 1][x - 1]){
-    					g.fillRect(x * 28, y * 35, 3, 3);
-    				}
-    			} catch (Exception e) {
-    				g.fillRect(x * 28, y * 35, 3, 3);
-    			}
-    			g.setColor(Color.green);
+    			if (PoliceChase.grid[y][x] != null) {
+    				PoliceChase.grid[y][x].paint(g);
+    			} 
     		}
     	}
 	}

@@ -9,9 +9,10 @@ public class Bomb extends Ammo{
 	public static long fireTime = 3000000000L;
 	private long explosionTime = -1L;
 	public static int preferredRange = 550;
+	public static double speed = 1.8;
 	private boolean access = false;
 	public Bomb(Car car) {
-		super(car, 2.3, 2, Assets.imgs.get(car.team ? "BlueBomb" : "RedBomb"));
+		super(car, 1.8, 2, Assets.imgs.get(car.team ? "BlueBomb" : "RedBomb"));
 	}
 	@Override
 	public void paint(Graphics g) {
@@ -27,7 +28,7 @@ public class Bomb extends Ammo{
 			return;
 		}
 		for (Car c: Screen.cars) {
-			if (c.team != this.team && c.rect.intersects(this.rect) && !(c instanceof Ammo)) {
+			if (c.team != this.team && c.Hp > 0 && c.rect.intersects(this.rect) && !(c instanceof Ammo)) {
 				access = true;
 				c.Hp --;
 				fire();

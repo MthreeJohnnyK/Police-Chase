@@ -18,7 +18,7 @@ public class Ammo extends Car{
 		//g.setColor(Color.cyan);
 		//g.fillRect((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height);
 		for (Car c: Screen.cars) {
-			if (c.team != this.team && c.rect.intersects(this.rect) && !(c instanceof Ammo)) {
+			if (c.team != this.team && c.Hp > 0 && c.rect.intersects(this.rect) && !(c instanceof Ammo)) {
 				c.Hp -= Hp;
 				Screen.carsToRemove.add(this);
 				break;
@@ -52,5 +52,10 @@ public class Ammo extends Car{
 			Screen.carsToRemove.add(this);
 		}
 		lastMove = System.nanoTime();
+	}
+	@Override
+	public boolean touchingWall() {
+		Point loc = getGridLocation();
+		return PoliceChase.grid[loc.y][loc.x].canCollide; 
 	}
 }

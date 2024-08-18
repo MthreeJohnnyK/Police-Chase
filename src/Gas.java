@@ -10,19 +10,20 @@ public class Gas extends Ammo{
 	public static long fireTime = 1500000000L;
 	public static int limit = 180;
 	public static int preferredRange = 180;
+	public static double speed = 0.55;
 	public static boolean penetrable = true;
 	private static HashMap<Car, Long> dmgQueue = new HashMap<Car, Long>();
 	private double moved = 0;
 	private long spawnTime = System.nanoTime();
 	public Gas(Car car) {
-		super(car, 0.23, 1, Assets.imgs.get(car.team ? "BlueGas" : "RedGas"));
+		super(car, 0.55, 1, Assets.imgs.get(car.team ? "BlueGas" : "RedGas"));
 		rect.width = 6;
 		rect.height = 6;
 		Screen.carsToAdd.add(new Gas(car, Math.PI/15));
 		Screen.carsToAdd.add(new Gas(car, -Math.PI/15));
 	}
 	public Gas(Car car, double offset) {
-		super(car, 0.23, 1, Assets.imgs.get(car.team ? "BlueGas" : "RedGas"));
+		super(car, 0.55, 1, Assets.imgs.get(car.team ? "BlueGas" : "RedGas"));
 		theta += offset;
 		rect.width = 6;
 		rect.height = 6;
@@ -35,16 +36,16 @@ public class Gas extends Ammo{
 		for (Car c: Screen.cars) {
 			if (c.team != this.team && c.rect.intersects(this.rect) && !(c instanceof Ammo)) {
 				dmgQueue.putIfAbsent(c, System.nanoTime());
-				if (System.nanoTime() > dmgQueue.get(c) + 500000000) {
-					if (c.rect.intersects(this.rect)  && System.nanoTime() < dmgQueue.get(c) + 505000000) {
+				if (System.nanoTime() > dmgQueue.get(c) + 310000000) {
+					if (c.rect.intersects(this.rect)  && System.nanoTime() < dmgQueue.get(c) + 315000000) {
 						c.Hp -= Hp;
 					}
 					dmgQueue.remove(c);
 				}
 			}
 		}
-		move(speed);
-		speed = moved/500 + 0.23;
+		move(super.speed);
+		//speed = moved/500 + 0.23;
 		rect.width = moved/3 + 5;
 		rect.height = moved/3 + 5;
 		if (System.nanoTime() > lastMove + 10000000) {

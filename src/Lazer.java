@@ -8,9 +8,9 @@ import java.awt.image.BufferedImage;
 public class Lazer extends Ammo{
 	public static long fireTime = 3000000000L;
 	public static int preferredRange = 680;
-	private boolean bounced = false;
+	public static double speed = 2.8;
 	public Lazer(Car car) {
-		super(car, 1.8, 2, Assets.imgs.get(car.team ? "BlueLazer" : "RedLazer"));
+		super(car, 2.8, 3, Assets.imgs.get(car.team ? "BlueLazer" : "RedLazer"));
 	}
 	@Override
 	public void paint(Graphics g) {
@@ -18,12 +18,16 @@ public class Lazer extends Ammo{
 		//g.fillRect((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height);
 		for (Car c: Screen.cars) {
 			if (c.team != this.team && c.rect.intersects(this.rect) && !(c instanceof Ammo)) {
-				c.Hp -= Hp;
-				Screen.carsToRemove.add(this);
+				int r = Hp > c.Hp ? c.Hp : Hp;
+				Hp -= r;
+				c.Hp -= r;
+				if (Hp <= 0) {
+					Screen.carsToRemove.add(this);
+				}
 				break;
 			}
 		}
-		drawImage(rect.getCenterX(), rect.getCenterY(), rect.width * 2.5, rect.height * 0.5, theta, img, g);
+		drawImage(rect.getCenterX(), rect.getCenterY(), rect.width * Hp, rect.height * 0.2 * Hp, theta, img, g);
 		move(speed);
 		if (System.nanoTime() > lastMove + 10000000) {
 			lastMove = System.nanoTime() - 10000000;
@@ -40,8 +44,8 @@ public class Lazer extends Ammo{
 		steps *= (System.nanoTime() - lastMove)/10000000.0;
 		rect.x += steps * Math.cos(theta);
 		if (touchingWall()) {
-			if (!bounced) {
-				bounced = true;
+			if (Hp > 1) {
+				Hp --;
 				while(touchingWall()) {
 					rect.x -=  Math.cos(theta);
 				}
@@ -53,8 +57,8 @@ public class Lazer extends Ammo{
 		}
 		rect.y -= steps * Math.sin(theta);
 		if (touchingWall()) {
-			if (!bounced) {
-				bounced = true;
+			if (Hp > 1) {
+				Hp --;
 				while(touchingWall()) {
 					rect.y += Math.sin(theta);
 				}

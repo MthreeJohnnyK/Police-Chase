@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 public class Minigun extends Ammo{
 	public static long fireTime = 5800000000L;
 	public static int preferredRange = 300;
+	public static double speed = 1.4;
 	private long spawnTime;
 	public Minigun(Car car) {
 		super(car, 1.4, 2, Assets.imgs.get(car.team ? "BlueMinigun" : "RedMinigun"));

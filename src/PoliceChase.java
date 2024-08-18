@@ -18,34 +18,9 @@ public class PoliceChase {
     static Car Police1;
     static Car Police2;
     static Car Thief;
-    static String gridString = "##################################################"
-    		+ "#                                                #"
-    		+ "#         #                      #    #    #     #"
-    		+ "#    #          #     ##              #          #"
-    		+ "#         #     #      ##           #####      ###"
-    		+ "#         #     #       ##            #          #"
-    		+ "#   #######     #        ##      #    #    #     #"
-    		+ "#              ##         ##                     #"
-    		+ "#             ##           #                     #"
-    		+ "######       ##               #######     #    ###"
-    		+ "#           ##                #           #      #"
-    		+ "#          ##                 #           #      #"
-    		+ "#      #####        #         #     #######      #"
-    		+ "###                                            ###"
-    		+ "###                                            ###"
-    		+ "#      #####           #      #########   #      #"
-    		+ "#      #         #                #       #      #"
-    		+ "#    ###         ##               #       #      #"
-    		+ "#    ###     #    ##        ###   #   ########   #"
-    		+ "#      #           ##                 #          #"
-    		+ "#      #            ##                           #"
-    		+ "###    #    #####    ##       #            #     #"
-    		+ "###                       #   #########          #"
-    		+ "#                         #                      #"
-    		+ "##################################################";
     //sets up fps calculation 
     static int frames = 0;
-    static long lastUpdate = System.currentTimeMillis();
+    static long lastUpdate = System.nanoTime();
     static long lastSound = System.currentTimeMillis();
     static long startTime = System.currentTimeMillis();
     private static long lastNavigate = System.currentTimeMillis() - 1000;
@@ -54,7 +29,8 @@ public class PoliceChase {
     static JPanel s;// = new Screen(1, 26, new Basic(Screen.X(500), Screen.Y(880)));
     static JPanel queue;
     static boolean devMode = true;
-    static boolean[][] grid = new boolean[25][50];
+    static Map map;
+    static MapObject[][] grid;
     //initalizes the frame
     static JFrame frame = new JFrame();
     public static void main(String[] args) {
@@ -76,35 +52,36 @@ public class PoliceChase {
         }
         frame.setIconImage(img);
         //frame.addMouseListener(new Mouse());
-        frame.setVisible(true);
-        //initalizes the screen
-        frame.add(s);
-        System.out.println(gridString.length());
-        for (int y = 0; y < 25; y ++) {
-        	for (int x = 0; x < 50; x ++) {
-        		grid[y][x] = gridString.charAt(y * 50 + x) == '#';
-        	}
-        }
-        Thief = new Thief(1344, 805, 0, Cannonball.class, new Landmine());
+        map = Map.generate(1);
+        grid = map.synthesis();
+        PowerUp.newPowerUp();
+        Thief = new Thief(map.Thief.x, map.Thief.y, 0, Gas.class, new Drone());
+        Thief.devMode = false;
         Screen.carsToAdd.add(Thief);
         frame.addKeyListener((KeyListener) Thief);
-        Police1 = new Penguin(336, 630, 0, Mortar.class);
+        Police1 = new Penguin(map.Police1.x, map.Police1.y, 0, Cannonball.class, new Heal()); 
+        Police1.devMode = false;
         Screen.carsToAdd.add(Police1);
         frame.addKeyListener((KeyListener) Police1);
-        Police2 = new Penguin(112, 105, 0, Gas.class);
+        Police2 = new Penguin(map.Police2.x, map.Police2.y, 0, Lazer.class, new Heal());
+        Police2.devMode = false;
         Screen.carsToAdd.add(Police2);
         frame.addKeyListener((KeyListener) Police2);
+        //initalizes the screen
+        frame.add(s);
+        frame.setVisible(true);
         //main game loop
         while (true) { 
         	//width = frame.getWidth();
         	//height = frame.getHeight();
               //updates fps every 166 milliseconds
-              if (System.currentTimeMillis() >= lastUpdate + 166) {
-                      //calculates fps
-                      fps = frames/((System.currentTimeMillis() - lastUpdate)/1000.0);
-                      lastUpdate = System.currentTimeMillis(); 
-                      frames = 0;
-              }
+        	if (System.nanoTime() >= lastUpdate + 166000000L) {
+                //calculates fps
+                fps = frames/((System.nanoTime() - lastUpdate)/1000000000.0);
+                //System.out.println(fps);
+                lastUpdate = System.nanoTime(); 
+                frames = 0;
+        	}
               if (System.currentTimeMillis() >= lastSound + 100) {
                   //calculates fps
                   //Assets.playAll();
@@ -119,19 +96,11 @@ public class PoliceChase {
             	  /*if (s instanceof Start) {
             		  Thread.sleep(100);
             	  } else {*/
-            		  Thread.sleep(6);
+            		  Thread.sleep(fps > 150 ? 6 : 5);
             	  //}
               } catch (InterruptedException e) {
                   // TODO Auto-generated catch block
               } 
-              if (Police1.Hp == 0 && Police1.respawns == 0 && Police2.Hp == 0 && Police2.respawns == 0) {
-            	  System.err.println("The Thief Wins!");
-            	  System.exit(0);
-              }
-              if (Thief.Hp == 0 && Thief.respawns == 0) {
-            	  System.out.println("The Police Win!");
-            	  System.exit(0);
-              }
               if (queue != null) {
             	  frame.getContentPane().removeAll();
             	  frame.add(queue);

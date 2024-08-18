@@ -41,40 +41,73 @@ public class MathUtils {
 		dist = Math.abs(dist > Math.PI ? 2 * Math.PI - dist : dist);
 		return dist > Math.PI ? 2 * Math.PI - dist : dist;
 	}
-	public static boolean rayCast(Rect rect, double theta, Car target, Graphics g){
-		Rect r = new Rect(rect.getCenterX(), rect.getCenterY(), 1, 1);
-		while (true) {
-			r.x += Math.cos(theta);
-			r.y -= Math.sin(theta);
-			if (Car.touchingWall(r.x, r.y, 11)) {
-				return false;
-			}
-			if (r.intersects(target.rect)) {
-				return true;
-			}
-			if (g != null) {
-				g.setColor(Color.black);
-				g.fillRect((int) r.x, (int) r.y, 1, 1);
-			}
-		}
-	}
-	public static boolean rayCast(Rect rect, double theta, Car target, boolean ignore, int limit, Graphics g){
+	public static boolean rayCast(Rect rect, double theta, Object target, Graphics g){
 		Rect r = new Rect(rect.getCenterX(), rect.getCenterY(), 1, 1);
 		for (int count = 0; true; count++) {
 			r.x += Math.cos(theta);
 			r.y -= Math.sin(theta);
-			if (!ignore && Car.touchingWall(r.x, r.y, 11)) {
+			if (Car.touchingWall(r.x, r.y, count < 50 ? 13 : 3)) {
+				if (g != null) {
+					g.setColor(Color.red);
+					g.drawLine((int) rect.getCenterX(), (int) rect.getCenterY(), (int) r.x, (int) r.y);
+				}
+				return false;
+			}
+			if ((target instanceof Car && r.intersects(((Car) target).rect)) || (target instanceof Rect && r.intersects((Rect) target))) {
+				if (g != null) {
+					g.setColor(Color.green);
+					g.drawLine((int) rect.getCenterX(), (int) rect.getCenterY(), (int) r.x, (int) r.y);
+				}
+				return true;
+			}
+		}
+	}
+	public static boolean rayCast(Rect rect, double theta, Object target, int rayWidth, Graphics g){
+		Rect r = new Rect(rect.getCenterX(), rect.getCenterY(), 1, 1);
+		while (true) {
+			r.x += Math.cos(theta);
+			r.y -= Math.sin(theta);
+			if (Car.touchingWall(r.x, r.y, rayWidth)) {
+				if (g != null) {
+					g.setColor(Color.red);
+					g.drawLine((int) rect.getCenterX(), (int) rect.getCenterY(), (int) r.x, (int) r.y);
+				}
+				return false;
+			}
+			if ((target instanceof Car && r.intersects(((Car) target).rect)) || (target instanceof Rect && r.intersects((Rect) target))) {
+				if (g != null) {
+					g.setColor(Color.green);
+					g.drawLine((int) rect.getCenterX(), (int) rect.getCenterY(), (int) r.x, (int) r.y);
+				}
+				return true;
+			}
+		}
+	}
+	public static boolean rayCast(Rect rect, double theta, Object target, boolean ignore, int limit, Graphics g){
+		Rect r = new Rect(rect.getCenterX(), rect.getCenterY(), 1, 1);
+		for (int count = 0; true; count++) {
+			r.x += Math.cos(theta);
+			r.y -= Math.sin(theta);
+			if (!ignore && Car.touchingWall(r.x, r.y, count < 50 ? 13 : 3)) {
+				if (g != null) {
+					g.setColor(Color.red);
+					g.drawLine((int) rect.getCenterX(), (int) rect.getCenterY(), (int) r.x, (int) r.y);
+				}
 				return false;
 			}
 			if (r.x < 28 || r.y < 35 || r.x > 1372 || r.y > 840 || count >= limit) {
+				if (g != null) {
+					g.setColor(Color.red);
+					g.drawLine((int) rect.getCenterX(), (int) rect.getCenterY(), (int) r.x, (int) r.y);
+				}
 				return false;
 			}
-			if (r.intersects(target.rect)) {
+			if ((target instanceof Car && r.intersects(((Car) target).rect)) || (target instanceof Rect && r.intersects((Rect) target))) {
+				if (g != null) {
+					g.setColor(Color.green);
+					g.drawLine((int) rect.getCenterX(), (int) rect.getCenterY(), (int) r.x, (int) r.y);
+				}
 				return true;
-			}
-			if (g != null) {
-				g.setColor(Color.black);
-				g.fillRect((int) r.x, (int) r.y, 1, 1);
 			}
 		}
 	}

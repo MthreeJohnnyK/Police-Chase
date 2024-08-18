@@ -9,6 +9,7 @@ public class Mortar extends Ammo{
 	public static long fireTime = 5000000000L;
 	private long explosionTime;
 	public static int preferredRange = 880;
+	public static double speed = 1.8;
 	private boolean access = false;
 	private boolean exploded = false;
 	public static boolean penetrable = true;

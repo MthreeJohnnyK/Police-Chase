@@ -21,7 +21,7 @@ public class Ability {
 		drawImage(c.rect.getCenterX(), c.rect.getCenterY(), c.rect.width, c.rect.height, c.theta, img, g);
 	}
 	public boolean activate(Car c) {
-		if (System.nanoTime() < lastActivate + cooldown) {
+		if (System.nanoTime() < lastActivate + cooldown && c.Hp > 0) {
 			return false;
 		}
 		lastActivate = System.nanoTime();
@@ -35,5 +35,5 @@ public class Ability {
 	  	  at.translate(-image.getWidth(null) / 2, -image.getHeight(null) / 2);
 	  	  Graphics2D g2d = (Graphics2D) g;
 	  	  g2d.drawImage(image, at, null);
-		}
+	}
 }
